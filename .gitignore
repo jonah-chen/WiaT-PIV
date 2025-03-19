@@ -1,3 +1,11 @@
+*.zip
+*.npy
+PIV/[0-9]*.png
+*.mp4
+*.MOV
+*.mov
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
