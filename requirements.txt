@@ -1,0 +1,12 @@
+# Core numerical and data processing libraries
+numpy
+pandas
+matplotlib
+
+# Image and video processing libraries
+opencv-python
+pillow
+moviepy==1.0.3
+
+# PIV analysis library
+openpiv

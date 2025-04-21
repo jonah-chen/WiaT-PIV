@@ -454,7 +454,7 @@ class PivGuiApp:
         K, dist, R, T = None, None, None, None # Define for scope fix
         if use_calibration:
             K, dist, R, T = calib_params['K'], calib_params['dist'], calib_params['R'], calib_params['T']
-            units_label, vel_units_label = "world_units", "world_units/sec"
+            units_label, vel_units_label = "mm", "mm/sec"
         elif units_per_pixel:
             units_label, vel_units_label = f"units(scale={units_per_pixel:.3g})", f"units/sec"
         if dt_sec <= 0 and "/sec" in vel_units_label:
@@ -677,7 +677,7 @@ class PivGuiApp:
         try: # Update summary notes
             with open(summary_txt_path, 'w') as f:
                 f.write(f"PIV Analysis Summary\nInput Video: {os.path.basename(video_path)}\n" + "="*40 + "\n")
-                if use_calibration: f.write(f"Calibration File: {self.calib_file_path.get()}\n -> Units: world_units, world_units/sec\n")
+                if use_calibration: f.write(f"Calibration File: {self.calib_file_path.get()}\n -> Units: mm, mm/sec\n")
                 elif units_per_pixel: f.write(f"Scaling: Fallback = {units_per_pixel} units/pixel\n -> Units: units, units/sec\n")
                 else: f.write("Scaling: None\n -> Units: pixels, pixels/frame\n")
                 # Removed reference to corrected CSV
