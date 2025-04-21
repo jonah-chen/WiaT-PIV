@@ -78,26 +78,11 @@ def get_world_points(centroids, world_scale):
     disp[disp == 0] = torch.inf
     values, indices = disp.min(0)
     
-    # --- PCA approach for rotation angle ---
-    # 1. Center the data
-    mean_centroid = torch.mean(centroids, dim=0)
-    centered_centroids = centroids - mean_centroid
+    # use the old way of finding the rotation angle
+    vecs = centroids - centroids[indices]
+    angles = (np.pi + torch.arctan2(vecs[:, 1], vecs[:, 0])) % (np.pi / 2)
+    rot_angle = angles.mean()
     
-    # 2. Compute covariance matrix
-    # Using numpy for covariance calculation as torch.cov requires specific input shapes
-    cov_matrix = np.cov(centered_centroids.numpy().T) 
-    
-    # 3. Eigenvalue decomposition
-    eigenvalues, eigenvectors = np.linalg.eigh(cov_matrix)
-    
-    # 4. Get the principal eigenvector (corresponding to the largest eigenvalue)
-    principal_eigenvector = eigenvectors[:, np.argmax(eigenvalues)]
-    
-    # 5. Calculate the angle
-    # Angle of the principal component with respect to the positive x-axis
-    rot_angle = np.arctan2(principal_eigenvector[1], principal_eigenvector[0])
-    # --- End PCA approach ---
-
     # rotation matrix 
     t = torch.matmul(
         torch.tensor([[np.cos(rot_angle), -np.sin(rot_angle)], 
@@ -109,9 +94,13 @@ def get_world_points(centroids, world_scale):
     disp2 = disp.clone()
     adj = (disp2 > 0.5 * values.mean()) & (disp2 < 1.5 * values.mean())
 
-    q = [0]
+    # start from the point in closest to the center
+    dist_from_center = (centroids - centroids.mean(0, keepdim=True)).norm(dim=1)
+    center_index = dist_from_center.argmin()
+
+    q = [center_index]
     visited = torch.zeros_like(disp2[0], dtype=torch.bool)
-    visited[0] = True
+    visited[center_index] = True
     while len(q) > 0:
         current = q.pop(0)
         # get the neighbors

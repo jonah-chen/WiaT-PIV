@@ -500,7 +500,4 @@ class VideoEditorApp:
 if __name__ == "__main__":
     root = tk.Tk()
     app = VideoEditorApp(root)
-    try: root.mainloop()
-    except KeyboardInterrupt: print("Exiting...");
-    finally:
-        if root and root.winfo_exists(): root.destroy()
+    root.mainloop()
